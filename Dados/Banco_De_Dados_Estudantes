@@ -1,0 +1,114 @@
+-- 1. OTIMIZAÇÃO DE ORGANIZAÇÃO: Seleciona o banco de dados (Schema)
+USE estudantes_db;
+
+DROP TABLE IF EXISTS estudantes;
+
+CREATE TABLE estudantes (
+    student_id INT PRIMARY KEY AUTO_INCREMENT,
+    hours_studied DECIMAL(5, 2),
+    sleep_hours DECIMAL(5, 2),
+    attendance_percent DECIMAL(5, 2),
+    previous_scores DECIMAL(5, 2),
+    exam_score DECIMAL(5, 2)
+);
+
+-- 2. OTIMIZAÇÃO DE PERFORMANCE: Criação de Índices
+-- Eles aceleram drasticamente as consultas que usam GROUP BY e CASE
+CREATE INDEX idx_hours_studied ON estudantes (hours_studied);
+CREATE INDEX idx_sleep_hours ON estudantes (sleep_hours);
+CREATE INDEX idx_attendance ON estudantes (attendance_percent);
+CREATE INDEX idx_exam_score ON estudantes (exam_score);
+
+-- 3. ANÁLISES (Consultas de Análise)
+
+-- Consulta 1: Resumo - Média de Todas as Medidas
+SELECT
+    AVG(hours_studied) AS media_horas_estudadas,
+    AVG(sleep_hours) AS media_horas_sono,
+    AVG(attendance_percent) AS media_frequencia,
+    AVG(previous_scores) AS media_notas_anteriores,
+    AVG(exam_score) AS media_nota_final
+FROM
+    estudantes;
+
+-- Consulta 2: Distribuição dos Alunos por Faixa de Nota (Intervalos)
+SELECT
+    CASE
+        WHEN exam_score < 25 THEN '1. Ruim (Abaixo de 25)'
+        WHEN exam_score >= 25 AND exam_score < 40 THEN '2. Médio (25 a 39)'
+        ELSE '3. Excelente (40 ou Mais)'
+    END AS Faixa_Nota,
+    COUNT(*) AS Total_Alunos
+FROM
+    estudantes
+GROUP BY
+    Faixa_Nota
+ORDER BY
+    Faixa_Nota;
+
+-- Consulta 3: Impacto das Horas Estudadas na Nota Final
+SELECT
+    CASE
+        WHEN hours_studied < 5 THEN '1. Baixo Estudo (< 5h)'
+        WHEN hours_studied >= 5 AND hours_studied < 10 THEN '2. Estudo Médio (5h-10h)'
+        ELSE '3. Alto Estudo (> 10h)'
+    END AS Faixa_Estudo,
+    COUNT(*) AS Total_Alunos,
+    AVG(exam_score) AS Media_Nota_Final
+FROM
+    estudantes
+GROUP BY
+    Faixa_Estudo
+ORDER BY
+    Faixa_Estudo;
+
+-- Consulta 4: Impacto das Horas de Sono na Nota Final
+SELECT
+    CASE
+        WHEN sleep_hours < 6 THEN '1. Baixo Sono (< 6h)'
+        WHEN sleep_hours >= 6 AND sleep_hours < 8 THEN '2. Sono Médio (6h-8h)'
+        ELSE '3. Alto Sono (> 8h)'
+    END AS Faixa_Sono,
+    COUNT(*) AS Total_Alunos,
+    AVG(exam_score) AS Media_Nota_Final
+FROM
+    estudantes
+GROUP BY
+    Faixa_Sono
+ORDER BY
+    Faixa_Sono;
+
+-- Consulta 5: Impacto da Frequência na Nota Final
+SELECT
+    CASE
+        WHEN attendance_percent < 60 THEN '1. Baixa Frequência (< 60)'
+        WHEN attendance_percent >= 60 AND attendance_percent < 75 THEN '2. Frequência Média (60-74)'
+        ELSE '3. Alta Frequência (> 74)'
+    END AS Faixa_Frequencia,
+    COUNT(*) AS Total_Alunos,
+    AVG(exam_score) AS Media_Nota_Final
+FROM
+    estudantes
+GROUP BY
+    Faixa_Frequencia
+ORDER BY
+    Faixa_Frequencia;
+SELECT
+    CASE
+        -- 3. ALTO RENDIMENTO: Atende aos critérios 'Alto' em todas as 3 áreas
+        WHEN hours_studied >= 10 AND sleep_hours >= 8 AND attendance_percent >= 75 THEN '3. Alto Rendimento'
+
+        -- 1. BAIXO RENDIMENTO: Atende aos critérios 'Baixo' em todas as 3 áreas
+        WHEN hours_studied < 5 AND sleep_hours < 6 AND attendance_percent < 60 THEN '1. Baixo Rendimento'
+
+        -- 2. MISTO/MÉDIO: Todos os outros alunos (aqueles que misturam Alto e Baixo, ou que ficam na faixa Média)
+        ELSE '2. Rendimento Misto/Médio'
+    END AS Grupo_Rendimento_Combinado,
+    COUNT(*) AS Total_Alunos,
+    AVG(exam_score) AS Media_Nota_Final
+FROM
+    estudantes
+GROUP BY
+    Grupo_Rendimento_Combinado
+ORDER BY
+    Grupo_Rendimento_Combinado;
