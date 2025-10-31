@@ -34,5 +34,9 @@ Este projeto demonstra proficiência em todas as etapas da análise de dados:
     * Média de notas em cada grupo de hábitos.
 * **Design:** Uso de paleta de cores escura/profissional e destaque visual para o KPI principal.
 
+### 3. Dashboard Online
+
+(https://app.powerbi.com/view?r=eyJrIjoiZDA3MzExNGMtYmY4NC00MmMxLThlZGUtNTVmZmFiNzgzZmFjIiwidCI6ImMwMTRhZWVjLTFiZTAtNGFkMC04MDdhLWRiMGQ3YzJhMTAzZCJ9)
+
 ---
 *Este projeto demonstra a capacidade de transformar requisitos de negócio em modelos de dados robustos e insights acionáveis.*
